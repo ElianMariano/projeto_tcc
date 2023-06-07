@@ -3,6 +3,8 @@ from flask_migrate import Migrate
 from dotenv import dotenv_values
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from app.errors.types import *
+from app.errors.routes import *
 
 MODULES = ('authentication', 'level', 'guess', 'option', 'questions')
 
@@ -28,9 +30,17 @@ def configure_database(app):
         db.create_all()
 
 def register_modules(app):
+    # app.config['TRAP_HTTP_EXCEPTIONS'] = True
+
     for module_name in MODULES:
         module = importlib.import_module('app.{}.routes'.format(module_name))
         app.register_blueprint(module.blueprint)
+    
+    app.register_error_handler(500, default)
+    app.register_error_handler(APINotFound, error)
+    app.register_error_handler(APIResourceNotFound, error)
+    app.register_error_handler(APIMissingParams, error)
+    app.register_error_handler(APIAuthError, error)
 
 def create_app():
     app = Flask(__name__)

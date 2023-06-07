@@ -9,8 +9,9 @@ class Pergunta(db.Model):
 
     options = db.relationship('Opcao', backref='pergunta')
 
-    def __init__(self, texto):
+    def __init__(self, texto, nivel_id):
         self.texto = texto
+        self.nivel_id = nivel_id
 
     def __repr__(self):
         return '<id {}, texto: {}=>'.format(self.id, self.texto)

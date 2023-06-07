@@ -1,8 +1,9 @@
 import json
 from app import create_app
 from app.tests.utils import login
+from app import tests
 
-def test_get_guess():
+def test_get_guess(session):
     """Tests the guess get route"""
     client = create_app().test_client()
 
@@ -22,11 +23,11 @@ def test_get_guess():
     keys = list(body['success'].keys())
 
     assert 'id' in keys
-    assert 'paciente_id' in keys
-    assert 'nivel_id' in keys
-    assert 'correto' in keys
+    assert 'pacient_id' in keys
+    assert 'level_id' in keys
+    assert 'right' in keys
 
-def test_list_guess():
+def test_list_guess(session):
     """Tests the guess list route"""
     client = create_app().test_client()
 
@@ -48,17 +49,17 @@ def test_list_guess():
     keys = list(body['success']['guesses'][0].keys())
 
     assert 'id' in keys
-    assert 'paciente_id' in keys
-    assert 'nivel_id' in keys
-    assert 'correto' in keys
+    assert 'pacient_id' in keys
+    assert 'level_id' in keys
+    assert 'right' in keys
 
-def test_create_guess():
+def test_create_guess(session):
     """Tests the guess route"""
     client = create_app().test_client()
 
     (TOKEN, API_KEY) = login(client)
 
-    data = {'paciente_id': 1, 'nivel_id': 1, 'correto': True}
+    data = {'pacient_id': 1, 'level_id': 1, 'right': True}
 
     response = client.post('/guess', headers={'Authorization:': 'Bearer {}'.format(TOKEN), 'x_api_key': API_KEY, 'Content-Type': 'application/json'}, data=json.dumps(data))
     body = response.json
@@ -72,17 +73,17 @@ def test_create_guess():
     keys = list(body['success'].keys())
 
     assert 'id' in keys
-    assert 'paciente_id' in keys
-    assert 'nivel_id' in keys
-    assert 'correto' in keys
+    assert 'pacient_id' in keys
+    assert 'level_id' in keys
+    assert 'right' in keys
 
-def test_update_guess():
+def test_update_guess(session):
     """Tests the guess update route"""
     client = create_app().test_client()
 
     (TOKEN, API_KEY) = login(client)
 
-    data = {'paciente_id': 1, 'nivel_id': 1, 'correto': True}
+    data = {'pacient_id': 1, 'level_id': 1, 'right': True}
 
     ID = 1 # Considers the first id
 
@@ -98,11 +99,11 @@ def test_update_guess():
     keys = list(body['success'].keys())
 
     assert 'id' in keys and body['success']['id'] == ID
-    assert 'paciente_id' in keys and body['success']['paciente_id'] == data['paciente_id']
-    assert 'nivel_id' in keys and body['success']['nivel_id'] == data['nivel_id']
-    assert 'correto' in keys and body['success']['correto'] == data['correto']
+    assert 'pacient_id' in keys and body['success']['pacient_id'] == data['pacient_id']
+    assert 'level_id' in keys and body['success']['level_id'] == data['level_id']
+    assert 'right' in keys and body['success']['right'] == data['right']
 
-def test_delete_guess():
+def test_delete_guess(session):
     """Tests the guess delete route"""
     client = create_app().test_client()
 
@@ -113,14 +114,14 @@ def test_delete_guess():
 
     assert response.status_code == 202
 
-def test_guess_no_pacient_error():
+def test_guess_no_pacient_error(session):
     """Tests the guess does not have pacient error"""
     client = create_app().test_client()
 
     (TOKEN, API_KEY) = login(client)
     ID = 1 # Considers the first id
 
-    data = {'paciente_id': 10, 'nivel_id': 1, 'correto': True}
+    data = {'pacient_id': 10, 'level_id': 1, 'right': True}
 
     response = client.post('/guess/{}'.format(ID), headers={'Authorization:': 'Bearer {}'.format(TOKEN), 'x_api_key': API_KEY, 'Content-Type': 'application/json'}, data=json.dumps(data))
     body = response.json
@@ -134,14 +135,14 @@ def test_guess_no_pacient_error():
     assert body['error'] == 400
     assert body['message'] == 'Paciente não encontrado.'
 
-def test_guess_no_level_error():
+def test_guess_no_level_error(session):
     """Tests the guess does not have level error"""
     client = create_app().test_client()
 
     (TOKEN, API_KEY) = login(client)
     ID = 1 # Considers the first id
 
-    data = {'paciente_id': 1, 'nivel_id': 10, 'correto': True}
+    data = {'pacient_id': 1, 'level_id': 10, 'right': True}
 
     response = client.post('/guess/{}'.format(ID), headers={'Authorization:': 'Bearer {}'.format(TOKEN), 'x_api_key': API_KEY, 'Content-Type': 'application/json'}, data=json.dumps(data))
     body = response.json
@@ -155,14 +156,14 @@ def test_guess_no_level_error():
     assert body['error'] == 400
     assert body['message'] == 'Nível não encontrado.'
 
-def test_no_guess():
+def test_no_guess(session):
     """Tests no guess"""
     client = create_app().test_client()
 
     (TOKEN, API_KEY) = login(client)
     ID = 10 # Considers the first id
 
-    data = {'paciente_id': 1, 'nivel_id': 10, 'correto': True}
+    data = {'pacient_id': 1, 'level_id': 10, 'right': True}
 
     response = client.put('/guess/{}'.format(ID), headers={'Authorization:': 'Bearer {}'.format(TOKEN), 'x_api_key': API_KEY, 'Content-Type': 'application/json'}, data=json.dumps(data))
     body = response.json

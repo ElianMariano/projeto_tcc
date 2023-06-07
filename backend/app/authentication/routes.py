@@ -4,6 +4,8 @@ from dotenv import dotenv_values
 from app.authentication import blueprint
 from flask import jsonify, make_response, request, Response
 from app.authentication.models import *
+from app.errors.types import *
+from app.authentication.utils import validate_params
 
 @blueprint.route('/login', methods=['POST'])
 def login():
@@ -37,30 +39,40 @@ def login():
 def findex(id):
     fono = Fono.query.get(id)
 
-    return make_response(jsonify(fono.as_dict()), 200)
+    if fono == None:
+        raise APINotFound('Fonoaudiólogo não encontrado.')
+
+    return make_response(jsonify({'success': fono.as_dict()}), 200)
 
 @blueprint.get('/fono')
 def flist():
     fonos = Fono.query.all()
     
-    return make_response(jsonify([fono.as_dict() for fono in fonos]), 200)
+    return make_response(jsonify({'success': [fono.as_dict() for fono in fonos]}), 200)
 
 @blueprint.post('/fono')
 def fcreate():
     body = request.json
 
-    fono = Fono(nome=body['name'], nascimento=body['birth'], senha=body['password'], cpf=body['cpf'], endereco=body['endereco'])
+    validate_params(['name', 'birth', 'password', 'cpf', 'address'], body=body)
+
+    fono = Fono(nome=body['name'], nascimento=body['birth'], senha=body['password'], cpf=body['cpf'], endereco=body['address'])
 
     db.session.add(fono)
     db.session.commit()
 
-    return make_response(jsonify(body), 200)
+    return make_response(jsonify({'success': fono.as_dict()}), 200)
 
 @blueprint.put('/fono/<int:id>')
 def fupdate(id):
     fono = Fono.query.get(id)
 
+    if fono == None:
+        raise APINotFound('Fonoaudiólogo não encontrado.')
+
     body = request.json
+    
+    validate_params(['name', 'birth', 'password', 'cpf', 'address'], body=body)
 
     fono.nome = body['name']
     fono.nascimento = body['birth']
@@ -71,11 +83,14 @@ def fupdate(id):
     # db.session.update(fono)
     db.session.commit()
 
-    return make_response(jsonify(fono.as_dict()), 200)
+    return make_response(jsonify({'success': fono.as_dict()}), 200)
 
 @blueprint.delete('/fono/<int:id>')
 def fdelete(id):
     fono = Fono.query.get(id)
+
+    if fono == None:
+        raise APINotFound('Fonoaudiólogo não encontrado.')
 
     db.session.delete(fono)
     db.session.commit()
@@ -88,30 +103,50 @@ def fdelete(id):
 def pindex(id):
     paciente = Paciente.query.get(id)
 
-    return make_response(jsonify(paciente.as_dict()), 200)
+    if paciente == None:
+        raise APINotFound('Paciente não encontrado.')
+
+    return make_response(jsonify({'success': paciente.as_dict()}), 200)
 
 @blueprint.get('/pacient')
 def plist():
     pacientes = Paciente.query.all()
     
-    return make_response(jsonify([paciente.as_dict() for paciente in pacientes]), 200)
+    return make_response(jsonify({'success': [paciente.as_dict() for paciente in pacientes]}), 200)
 
 @blueprint.post('/pacient')
 def pcreate():
     body = request.json
+
+    validate_params(['name', 'birth', 'password', 'fono_id', 'address'], body=body)
+
+    fono = Fono.query.get(body['fono_id'])
+    
+    if fono == None:
+        raise APINotFound('Fonoaudiólogo não encontrado.')
 
     paciente = Paciente(nome=body['name'], nascimento=body['birth'], senha=body['password'], endereco=body['address'], pontos=0, fono_id=body['fono_id'])
 
     db.session.add(paciente)
     db.session.commit()
 
-    return make_response(jsonify(body), 200)
+    return make_response(jsonify({'success': paciente.as_dict()}), 200)
 
 @blueprint.put('/pacient/<int:id>')
 def pupdate(id):
     paciente = Paciente.query.get(id)
 
+    if paciente == None:
+        raise APINotFound('Paciente não encontrado.')
+
     body = request.json
+
+    validate_params(['name', 'birth', 'password', 'fono_id', 'address'], body=body)
+
+    fono = Fono.query.get(body['fono_id'])
+    
+    if fono == None:
+        raise APINotFound('Fonoaudiólogo não encontrado.')
 
     paciente.nome = body['name']
     paciente.nascimento = body['birth']
@@ -121,11 +156,14 @@ def pupdate(id):
     # db.session.update(fono)
     db.session.commit()
 
-    return make_response(jsonify(paciente.as_dict()), 200)
+    return make_response(jsonify({'success': paciente.as_dict()}), 200)
 
 @blueprint.delete('/pacient/<int:id>')
 def pdelete(id):
     paciente = Paciente.query.get(id)
+
+    if paciente == None:
+        raise APINotFound('Paciente não encontrado.')
 
     db.session.delete(paciente)
     db.session.commit()

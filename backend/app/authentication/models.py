@@ -24,7 +24,7 @@ class Fono(db.Model):
         return '<id {}, nome: {}, cpf: {}>'.format(self.id, self.nome, self.cpf)
     
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {'id': self.id, 'name': self.nome, 'birth': self.nascimento, 'cpf': self.cpf, 'address': self.endereco, 'level_id': self.nivel_id}
 
 class Paciente(db.Model):
     __tablename__ = 'paciente'
@@ -52,4 +52,4 @@ class Paciente(db.Model):
         return '<id {}, nome: {}>'.format(self.id, self.nome)
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        return {'id': self.id, 'name': self.nome, 'birth': self.nascimento, 'address': self.endereco, 'fono_id': self.fono_id, 'points': self.pontos}
