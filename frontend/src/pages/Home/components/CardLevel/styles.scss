@@ -1,0 +1,45 @@
+@use '../../../../global';
+
+.card-level-container{
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+    // width: 20vw;
+    border-radius: 1em;
+    display: inline-block;
+    margin: 20px 10px;
+    min-width: 10vw;
+    max-width: 40%;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: row;
+    padding: 10px 10px;
+
+    div {
+        flex: 8;
+
+        h4 {
+            color: red;
+        }
+    }
+
+    img {
+        flex: 2;
+        width: 25px;
+        height: 25px;
+        margin: 5px;
+    }
+}
+
+.card-level-container .card-footer {
+    background-color: global.$error-color;
+    border-radius: 0 0 1em 1em;
+    padding: 15px 10px;
+
+    p {
+        color: #dc3545;
+        font-weight: bold;
+        font-size: medium;
+        margin: 0;
+    }
+}
