@@ -9,10 +9,11 @@ class Opcao(db.Model):
     arquivo = db.Column(db.String, nullable=False)
     pergunta_id = db.Column(db.Integer, db.ForeignKey('pergunta.id'), nullable=False)
 
-    def __init__(self, texto, correta, arquivo):
+    def __init__(self, texto, correta, arquivo, pergunta_id):
         self.texto = texto
         self.correta = correta
         self.arquivo = arquivo
+        self.pergunta_id = pergunta_id
 
     def __repr__(self):
         return '<id {}, texto: {}, correta: {}, arquivo: {}>'.format(self.id, self.texto, self.correta, self.arquivo)

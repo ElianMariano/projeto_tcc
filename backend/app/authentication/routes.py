@@ -2,21 +2,25 @@ import os
 import json
 from dotenv import dotenv_values
 from app.authentication import blueprint
-from flask import jsonify, make_response, request, Response
+from flask import jsonify, make_response, request, Response, send_from_directory
 from app.authentication.models import *
 from app.errors.types import *
 from app.authentication.utils import validate_params
+
+@blueprint.route('/static/<path>')
+def static(path):
+    return send_from_directory('assets', path)
 
 @blueprint.route('/login', methods=['POST'])
 def login():
     API_KEY = dotenv_values(os.path.join('.env'))['API_KEY']
     
-    if ('x-api-key' in request.headers and request.headers['x-api-key'] != API_KEY):
-        response = make_response(jsonify(error=401, message='API KEY inválida.'), 401)
-        return response
-    elif ('x-api-key' not in request.headers):
-        response = make_response(jsonify(error=401, message='Nenhuma API KEY foi informada.'), 401)
-        return response
+    # if ('x-api-key' in request.headers and request.headers['x-api-key'] != API_KEY):
+    #     response = make_response(jsonify(error=401, message='API KEY inválida.'), 401)
+    #     return response
+    # elif ('x-api-key' not in request.headers):
+    #     response = make_response(jsonify(error=401, message='Nenhuma API KEY foi informada.'), 401)
+    #     return response
 
     body = request.json
 
@@ -29,6 +33,8 @@ def login():
         return response
     
     # TODO CHECK PASSWORD
+
+    fono = Fono.query.filter(Fono.email == body['email'] and Fono.password == body['senha'])
 
     response = make_response(jsonify(user='elian', token='token'), 200)
     return response

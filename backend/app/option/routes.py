@@ -1,3 +1,5 @@
+import os
+import uuid
 from flask import request, jsonify, Response, make_response
 from app.option import blueprint
 from app.option.models import *
@@ -17,15 +19,29 @@ def index(id):
 def list():
     opcoes = Opcao.query.all()
 
-    return make_response(jsonify({'success': [opcao.as_dict for opcao in opcoes]}), 200)
+    return make_response(jsonify({'success': [opcao.as_dict() for opcao in opcoes]}), 200)
 
 @blueprint.post('/option')
 def create():
-    body = request.json
+    body = dict(request.form)
 
-    validate_params('text', 'right', body=body)
+    validate_params(['text', 'right', 'pergunta_id'], body=body)
 
-    opcao = Opcao(texto=body['text'], correta=body['right'], arquivo=body['file'])
+    files = request.files
+
+    validate_params(['file'], body=files)
+
+    # Saves the file
+    file = files['file']
+
+    # Verify if the file extension first
+    filename = "{}.png".format(uuid.uuid4())
+    file.save(os.path.join(os.getcwd(), 'app', 'assets', filename))
+
+    # Verify the boolean value
+    right = True if body['right'] == 'true' or body['right'] == 'True' else False
+
+    opcao = Opcao(texto=body['text'], correta=right, arquivo="/static/{}".format(filename), pergunta_id=int(body['pergunta_id'].replace('\n', '')))
 
     db.session.add(opcao)
     db.session.commit()
@@ -36,7 +52,7 @@ def create():
 def update(id):
     body = request.json
 
-    validate_params('text', 'right', body=body)
+    validate_params(['text', 'right'], body=body)
 
     opcao = Opcao.query.get(id)
 

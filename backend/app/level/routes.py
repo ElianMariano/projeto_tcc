@@ -4,6 +4,30 @@ from app.level.models import *
 from app.errors.types import *
 from app.authentication.utils import validate_params
 
+@blueprint.get('/level-all/<int:id>')
+def levelall(id):
+    level = Nivel.query.get(id)
+
+    if level == None:
+        raise APIResourceNotFound('Nível não encontrado.')
+    
+    result = level.as_dict()
+
+    perguntas = []
+
+    for question in level.questions:
+        dquestion = question.as_dict()
+
+        options = [option.as_dict() for option in question.options]
+
+        dquestion['opcoes'] = options
+
+        perguntas.append(dquestion)
+
+    result['perguntas'] = perguntas
+
+    return make_response(jsonify({'success': result}), 200)
+
 @blueprint.get('/level/<int:id>')
 def index(id):
     level = Nivel.query.get(id)

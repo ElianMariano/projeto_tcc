@@ -3,6 +3,7 @@ from flask_migrate import Migrate
 from dotenv import dotenv_values
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS, cross_origin
 from app.errors.types import *
 from app.errors.routes import *
 
@@ -44,6 +45,7 @@ def register_modules(app):
 
 def create_app():
     app = Flask(__name__)
+    CORS(app, support_credentials=True)
 
     register_modules(app)
     configure_database(app)

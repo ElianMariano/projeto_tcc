@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 export default function Login(){
     return (
@@ -15,10 +16,10 @@ export default function Login(){
                 </div>
 
                 <div className='d-grid gap-2'>
-                    <button type='button' className='btn btn-primary'>Login</button>
-                    <button type='button' className='btn btn-secondary'>Criar conta</button>
+                    <button type='button' className='btn btn-primary row'>Login</button>
+                    <Link to='/criar-conta' className='row'><button type='button' className='btn btn-secondary'>Criar conta</button></Link>
                 </div>
-                <button type='button' className='btn btn-link'>Esqueceu a senha?</button>
+                {/* <button type='button' className='btn btn-link'>Esqueceu a senha?</button> */}
             </div>
         </>
     );
