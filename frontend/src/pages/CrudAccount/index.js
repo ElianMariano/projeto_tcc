@@ -39,7 +39,7 @@ export default function CrudAccount(){
         }
 
         const data = fonos.filter(e => e.id === fono);
-        if (data.length === 0){
+        if (data.length === 0 && paciente){
             alert('Selecione um fonoaudiólogo');
             return;
         }
@@ -50,6 +50,7 @@ export default function CrudAccount(){
                 birth,
                 password,
                 address,
+                email,
                 fono_id: fono
             })
             .then(res => {
@@ -65,6 +66,7 @@ export default function CrudAccount(){
                 birth,
                 password,
                 cpf,
+                email,
                 address
             })
             .then(res => {
@@ -79,6 +81,8 @@ export default function CrudAccount(){
     return (
         <>
             <div className='container-sm mx-auto mt-2'>
+                <h1>Cadastro</h1>
+
                 <div className="mb-3">
                     <label for="name" className="form-label">Nome</label>
                     <input type="label" className="form-control" placeholder="" id='name' value={name} onChange={e => setName(e.target.value)}/>

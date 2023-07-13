@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './pages/Layout';
 import Login from './pages/Login';
@@ -15,10 +15,28 @@ import AnswerQuestion from './pages/AnswerQuestion';
 import Report from './pages/Report';
 
 export default function Router(){
+    const [logged, setLogged] = useState(false);
+    const [fono, setFono] = useState(false);
+
+    useEffect(() => {
+        const data = localStorage.getItem('user');
+
+        if (data != undefined && data != null){
+            setLogged(true);
+
+            console.log(data);
+            console.log(data.hasOwnProperty('cpf'));
+
+            if (JSON.parse(data).hasOwnProperty('cpf')){
+                setFono(true);
+            }
+        }
+    }, []);
+
     return (
         <BrowserRouter>
             <Routes>
-                <Route element={<Layout/>} path='/'>
+                <Route element={<Layout logged={logged} fono={fono}/>} path='/'>
                     <Route element={<Login/>} index/>
                     <Route element={<Home/>} path='/home'/>
                     <Route element={<CrudAccount/>} path='/criar-conta'/>

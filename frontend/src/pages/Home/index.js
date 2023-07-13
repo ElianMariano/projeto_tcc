@@ -23,6 +23,8 @@ export default function Home(){
                 {levels.map(level => (
                     <CardLevel id={level.id} pontos={level.pontos} dificuldade={level.dificuldade}/>
                 ))}
+
+                {levels.length == 0 && <h3>Você não possui nenhum nível ainda.</h3>}
             </div>
         </>
     );

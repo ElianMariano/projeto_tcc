@@ -34,9 +34,19 @@ def login():
     
     # TODO CHECK PASSWORD
 
-    fono = Fono.query.filter(Fono.email == body['email'] and Fono.password == body['senha'])
+    fono = list(Fono.query.filter(Fono.email == body['email']).filter(Fono.senha == body['senha']))
 
-    response = make_response(jsonify(user='elian', token='token'), 200)
+    paciente = list(Paciente.query.filter(Paciente.email == body['email']).filter(Paciente.senha == body['senha']))
+
+    if len(fono) > 0:
+        response = make_response(jsonify({'success': fono[0].as_dict()}), 200)
+        return response
+    
+    if (len(paciente)) > 0:
+        response = make_response(jsonify({'success': fono[0].as_dict()}), 200)
+        return response
+
+    response = make_response(jsonify({'error': 'Usuário não encontrado.', 'code': 400}), 400)
     return response
 
 # ============== Fono ==============
@@ -60,9 +70,9 @@ def flist():
 def fcreate():
     body = request.json
 
-    validate_params(['name', 'birth', 'password', 'cpf', 'address'], body=body)
+    validate_params(['name', 'birth', 'password', 'cpf', 'address', 'email'], body=body)
 
-    fono = Fono(nome=body['name'], nascimento=body['birth'], senha=body['password'], cpf=body['cpf'], endereco=body['address'])
+    fono = Fono(nome=body['name'], nascimento=body['birth'], senha=body['password'], cpf=body['cpf'], endereco=body['address'], email=body['email'])
 
     db.session.add(fono)
     db.session.commit()
@@ -78,10 +88,11 @@ def fupdate(id):
 
     body = request.json
     
-    validate_params(['name', 'birth', 'password', 'cpf', 'address'], body=body)
+    validate_params(['name', 'birth', 'password', 'cpf', 'address', 'email'], body=body)
 
     fono.nome = body['name']
     fono.nascimento = body['birth']
+    fono.email = body['email']
     fono.senha = body['password']
     fono.cpf = body['cpf']
     fono.endereco = body['address']
@@ -124,14 +135,14 @@ def plist():
 def pcreate():
     body = request.json
 
-    validate_params(['name', 'birth', 'password', 'fono_id', 'address'], body=body)
+    validate_params(['name', 'birth', 'password', 'fono_id', 'address', 'email'], body=body)
 
     fono = Fono.query.get(body['fono_id'])
     
     if fono == None:
         raise APINotFound('Fonoaudiólogo não encontrado.')
 
-    paciente = Paciente(nome=body['name'], nascimento=body['birth'], senha=body['password'], endereco=body['address'], pontos=0, fono_id=body['fono_id'])
+    paciente = Paciente(nome=body['name'], nascimento=body['birth'], senha=body['password'], endereco=body['address'], pontos=0, fono_id=body['fono_id'], email=body['email'])
 
     db.session.add(paciente)
     db.session.commit()
@@ -147,7 +158,7 @@ def pupdate(id):
 
     body = request.json
 
-    validate_params(['name', 'birth', 'password', 'fono_id', 'address'], body=body)
+    validate_params(['name', 'birth', 'password', 'fono_id', 'address', 'email'], body=body)
 
     fono = Fono.query.get(body['fono_id'])
     
@@ -158,6 +169,7 @@ def pupdate(id):
     paciente.nascimento = body['birth']
     paciente.senha = body['password']
     paciente.endereco = body['address']
+    paciente.email = body['email']
 
     # db.session.update(fono)
     db.session.commit()
