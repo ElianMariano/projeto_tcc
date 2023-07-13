@@ -122,10 +122,10 @@ export default function CrudAccount(){
                 {
                     (fonos.length > 0 && paciente) && (
                         <select className="form-select" aria-label="Default select example" value={fono} onChange={e => setFono(e.target.value)}>
-                            <option value={0} selected>Selecione a pergunta</option>
+                            <option value={0} selected>Selecione um fono</option>
                             {
                                 fonos.map(fono => (
-                                    <option key={`q${fono.id}`} value={fono.id} selected>{`Pergunta ${fono.id}: ${fono.texto}`}</option>
+                                    <option key={`q${fono.id}`} value={fono.id} selected>{`Fono ${fono.id}: ${fono.name}`}</option>
                                 ))
                             }
                         </select>

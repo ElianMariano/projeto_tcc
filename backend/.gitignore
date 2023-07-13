@@ -161,3 +161,4 @@ cython_debug/
 
 migrations/
 prompt.py
+backend/app/assets/

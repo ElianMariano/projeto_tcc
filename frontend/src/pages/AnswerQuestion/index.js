@@ -1,10 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
 export default function AnswerQuestion(){
     const [level, setLevel] = useState();
     const {id} = useParams();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         api.get(`/level-all/${id}`).then(res => {
@@ -17,7 +20,23 @@ export default function AnswerQuestion(){
     }, []);
 
     function submit(){
-        // api.post()
+        const data = JSON.parse(localStorage.get('user'));
+        if (data.hasOwnProperty('cpf')){
+            alert('O fono audiólogo não pode responder perguntas');
+        }
+
+        api.post('/guess', {
+            right: true,
+            level_id: level.id,
+            pacient_id: data.id
+        }).then(res => {
+            if (res.data.hasOwnProperty('success')){
+                navigate('/home');
+            }
+        })
+        .catch(err => {
+            alert(err);
+        });
     }
 
     return (

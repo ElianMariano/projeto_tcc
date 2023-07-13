@@ -10,6 +10,7 @@ export default function Admin(){
                 <Link to='/listar-niveis' className="row"><button type="button" class="btn btn-primary m-2">Níveis</button></Link>
                 <Link to='/listar-perguntas' className="row"><button type="button" class="btn btn-primary m-2">Perguntas</button></Link>
                 <Link to='/listar-opcoes' className="row"><button type="button" class="btn btn-primary m-2">Opções para perguntas</button></Link>
+                <Link to='/relatorio' className="row"><button type="button" class="btn btn-primary m-2">Relatórios</button></Link>
             </div>
         </>
     )

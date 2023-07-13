@@ -8,6 +8,7 @@ export default function Header({logged, fono}){
     function logout(){
         localStorage.clear();
         navigate('/');
+        window.location.reload();
     }
 
     return (

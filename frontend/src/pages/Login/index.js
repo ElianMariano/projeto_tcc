@@ -25,6 +25,7 @@ export default function Login(){
             if (data.hasOwnProperty('success')){
                 localStorage.setItem('user', JSON.stringify(data['success']));
                 navigate('/home');
+                window.location.reload();
                 return;
             }
             else{
